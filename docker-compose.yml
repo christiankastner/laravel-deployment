@@ -1,14 +1,48 @@
 version: '3'
 
-services:
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    ports:
-      - "8000:80"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
+networks:
+  laravel:
 
-  whoami:
-    image: jwilder/whoami
-    environment:
-      - VIRTUAL_HOST=whoami.local
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    ports: 
+      - "8080:80"
+    volumes: 
+      - ./src:/var/www
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on: 
+      - php
+      - mysql
+    networks:
+      - laravel
+
+  mysql:
+    image: mysql:5.7.22
+    container_name: mysql
+    restart: unless-stopped
+    tty: true
+    ports: 
+      - "3306:3306"
+    environment: 
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    networks:
+      - laravel
+  
+  php: 
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: php
+    volumes: 
+      - ./src:/var/www/html
+    ports:
+      - "9000:9000"
+    networks:
+      - laravel
