@@ -12,7 +12,14 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     zip \
-    unzip
+    unzip 
+
+# Install Node
+RUN apt-get install -y gnupg2
+
+RUN rm -rf /var/lib/apt/lists/ && curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get install nodejs -y
+
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
