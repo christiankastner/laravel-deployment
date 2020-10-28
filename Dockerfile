@@ -1,9 +1,5 @@
 FROM php:7.4-fpm
 
-# Arguments defined in docker-compose.yml
-ARG user
-ARG uid
-
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
@@ -31,18 +27,30 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Create system user to run Composer and Artisan Commands
-RUN useradd -G www-data,root -u $uid -d /home/$user $user
-RUN mkdir -p /home/$user/.composer && \
-    chown -R $user:$user /home/$user
+# RUN useradd -G www-data,root -u 1000 -d /home/www-data www-data
+RUN mkdir -p /home/www-data/.composer && \
+    chown -R www-data:www-data /home/www-data
 
 # Set working directory
 WORKDIR /var/www/
 
-COPY laravel-entrypoint.sh /laravel-entrypoint.sh
+ADD ./src /var/www/
+
+RUN chown -R www-data:www-data /var/www
+
 COPY dump.sql /dump.sql
 
-RUN chmod +x /laravel-entrypoint.sh
+USER www-data
 
-USER $user
+RUN npm i
+RUN npm run dev
 
-ENTRYPOINT [ "/laravel-entrypoint.sh" ]
+
+RUN composer install
+
+CMD php artisan serve --port=8000 --host=0.0.0.0
+
+EXPOSE 8000
+
+
+# ENTRYPOINT [ "/laravel-entrypoint.sh" ]
