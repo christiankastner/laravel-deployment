@@ -15,16 +15,16 @@ services:
             - "80:80"
             - "8080:8080"
         expose:
-            # traefik dashboard port
             - 8080
         labels:
             traefik.enable: true
-            traefik.http.routers.dashboard.rule: Host(`dashboard.easytentacles.fun`)
-            traefik.http.routers.dashboard.service: api@internal
+            traefik.http.routers.subdomains.rule: HostRegexp(`docker.localhost`,`{subhost:[a-z]+}.docker.localhost`)
+            traefik.http.routers.subdomains.middlewares: auth
+            traefik.http.routers.subdomains.service: api@internal
             traefik.http.routers.dashboard.middlewares: auth
             traefik.http.middlewares.auth.basicauth.users: curran:{SHA}jsSt4GSwtIUuiJ4H84bT35SSC6I=
         volumes:
-            - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
+            - /var/run/docker.sock:/var/run/docker.sock 
             - ./traefik.yml:/traefik.yml
         restart: "always"
         networks: 

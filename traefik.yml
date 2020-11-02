@@ -7,7 +7,7 @@ entryPoints:
 # Docker configuration backend
 providers:
     docker:
-        defaultRule: "Host(`{{ trimPrefix `/` .Name }}.easytentacles.fun`)"
+        defaultRule: "Host(`{{ trimPrefix `/` .Name }}.docker.localhost`)"
 
 # API and dashboard configuration
 api: 
