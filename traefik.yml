@@ -1,10 +1,14 @@
 ## traefik.yml
 
+entryPoints:
+    web:
+     address: ":80"
+
 # Docker configuration backend
 providers:
     docker:
         defaultRule: "Host(`{{ trimPrefix `/` .Name }}.easytentacles.fun`)"
-  
+
 # API and dashboard configuration
-api:
+api: 
     insecure: true
