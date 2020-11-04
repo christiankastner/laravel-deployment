@@ -18,10 +18,9 @@ services:
             - 8080
         labels:
             traefik.enable: true
-            traefik.http.routers.subdomains.rule: HostRegexp(`docker.localhost`,`{subhost:[a-z]+}.docker.localhost`)
+            traefik.http.routers.subdomains.rule: HostRegexp(`easytentacles.fun`,`{subhost:[a-z]+}.easytentacles.fun`)
             traefik.http.routers.subdomains.middlewares: auth
             traefik.http.routers.subdomains.service: api@internal
-            traefik.http.routers.dashboard.middlewares: auth
             traefik.http.middlewares.auth.basicauth.users: curran:{SHA}jsSt4GSwtIUuiJ4H84bT35SSC6I=
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock 
